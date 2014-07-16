@@ -9,15 +9,14 @@ import javax.swing.JPanel;
 
 public class Ant extends JPanel {
 
-	boolean advancingOnX = true, advancingOnY = true;
+	boolean advancingOnX = true, advancingOnY = true, inteligence = false;
 	Random rand = new Random();
 	int randomNumX = 0, randomNumY = 0;
 	int movement = 0;
-	int id,idF,idM;
+	int id, idF, idM;
 	int age;
 	int ageToDie;
 	int energy;
-	
 
 	/**
 	 * 
@@ -28,22 +27,22 @@ public class Ant extends JPanel {
 	private int width = 50, height = 50;
 	Color color;
 
-	public Ant(int id,int idF,int idM,int x, int y,Color color) {
+	public Ant(int id, int idF, int idM, int x, int y, Color color) {
 		this.setAgeToDie(randomAgeToDie());
 		this.setAge(0);
 		this.x_position = x;
 		this.y_position = y;
-		this.color= color;
+		this.color = color;
 		this.setId(id);
 		this.setIdF(idF);
 		this.setIdM(idM);
-		this.setEnergy(500);
+		this.setEnergy(1000);
 	}
 
-	public int randomAgeToDie(){
-		return 1000-rand.nextInt(900);
+	public int randomAgeToDie() {
+		return 1000 - rand.nextInt(900);
 	}
-	
+
 	public boolean collisionX_MAX(int x_max, int x) {
 		if (this.x_position > x_max) {
 			return true;
@@ -57,8 +56,8 @@ public class Ant extends JPanel {
 		}
 		return false;
 	}
-	
-	public int getId(){
+
+	public int getId() {
 		return this.id;
 	}
 
@@ -68,6 +67,14 @@ public class Ant extends JPanel {
 
 	public void setEnergy(int energy) {
 		this.energy = energy;
+	}
+
+	public boolean isInteligence() {
+		return inteligence;
+	}
+
+	public void setInteligence(boolean inteligence) {
+		this.inteligence = inteligence;
 	}
 
 	public int getAgeToDie() {
@@ -122,12 +129,10 @@ public class Ant extends JPanel {
 
 	public void advanceX(int i) {
 		this.setX(this.getX() + i);
-		this.setEnergy(this.getEnergy()-1);
 	}
 
 	public void advanceY(int i) {
 		this.setY(this.getY() + i);
-		this.setEnergy(this.getEnergy()-1);
 	}
 
 	public int getX() {
@@ -168,7 +173,7 @@ public class Ant extends JPanel {
 	}
 
 	public void moveAnt() {
-		this.setAge(this.getAge()+1);
+		this.setAge(this.getAge() + 1);
 		if (movement > 50) {
 			movement = 0;
 			advancingOnX = getRandomBoolean();
@@ -180,14 +185,12 @@ public class Ant extends JPanel {
 		if (advancingOnX) {
 			if (!this.collisionX_MAX(199, this.getX())) {
 				this.advanceX(randomNumX);
-				movement++;
 			} else {
 				advancingOnX = false;
 			}
 		} else {
 			if (!this.collisionX_MIN(0, this.getX())) {
 				this.advanceX(-randomNumX);
-				movement++;
 			} else {
 				advancingOnX = true;
 			}
@@ -205,6 +208,7 @@ public class Ant extends JPanel {
 				advancingOnY = true;
 			}
 		}
+		movement++;
 	}
 
 	public boolean getRandomBoolean() {

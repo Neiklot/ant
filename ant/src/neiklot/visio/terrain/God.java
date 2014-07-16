@@ -48,7 +48,7 @@ public class God {
 						.get(a).getY(), food.getY()) < 15){
 					food=null;
 					foodIterator.remove();
-					ants.get(a).setEnergy(250);
+					ants.get(a).setEnergy(1000);
 				}
 			}
 		}
@@ -71,7 +71,7 @@ public class God {
 
 	public static void newBorn(ArrayList<Ant> ants, Ant father, Ant mather) {
 		ants.add(new Ant(getMaxId(ants) + 1, father.getId(), mather.getId(),
-				father.getX() + 50, father.getY() + 50, Color.MAGENTA));
+				father.getX() + 50, father.getY() + 50, Color.BLACK));
 	}
 
 	public static boolean reproduction(Ant father, Ant mather) {

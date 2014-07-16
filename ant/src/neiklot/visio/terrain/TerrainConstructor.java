@@ -6,9 +6,6 @@ import java.awt.Graphics;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
-import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
@@ -19,6 +16,7 @@ import javax.swing.SwingUtilities;
 
 import neiklot.visio.environment.Food;
 import neiklot.visio.live.Ant;
+import neiklot.visio.live.Inteligence;
 
 public class TerrainConstructor {
 
@@ -50,10 +48,10 @@ public class TerrainConstructor {
 	}
 
 	private void initComponents() {
-		Ant ant = new Ant(0, -1, -2, 0, 0, Color.BLUE);
-		Ant ant2 = new Ant(1, -3, -4, 50, 50, Color.RED);
-		Ant ant3 = new Ant(2, -5, -6, 0, 0, Color.BLUE);
-		Ant ant4 = new Ant(3, -7, -8, 50, 50, Color.RED);
+		Inteligence ant = new Inteligence(0, -1, -2, 0, 0, Color.RED);
+		Ant ant2 = new Ant(1, -3, -4, 50, 50, Color.BLACK);
+		Ant ant3 = new Ant(2, -5, -6, 0, 0, Color.BLACK);
+		Ant ant4 = new Ant(3, -7, -8, 50, 50, Color.BLACK);
 
 		JFrame frame = new JFrame("Terrain");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -151,12 +149,17 @@ public class TerrainConstructor {
 					while (now - lastUpdateTime > TIME_BETWEEN_UPDATES
 							&& updateCount < MAX_UPDATES_BEFORE_RENDER) {
 						for (Ant ant : ants) {
-							ant.moveAnt();
+							if (ant.getId() == 0) {
+								((Inteligence) ant).goToEat(foods);
+							} else {
+								ant.moveAnt();
+							}
+							ant.setEnergy(ant.getEnergy()-1);
 						}
 						dieds = God.comprovingDieds(ants, dieds);
 						// brothers = God.countBrothers(ants);
-						
-						if(now%100==0){
+
+						if (now % 100 == 0) {
 							God.raiseFood(foods);
 						}
 						brothers = terrain.foods.size();
