@@ -37,7 +37,7 @@ public class Ant extends JPanel {
 		this.setId(id);
 		this.setIdF(idF);
 		this.setIdM(idM);
-		this.setEnergy(100);
+		this.setEnergy(500);
 	}
 
 	public int randomAgeToDie(){
@@ -122,10 +122,12 @@ public class Ant extends JPanel {
 
 	public void advanceX(int i) {
 		this.setX(this.getX() + i);
+		this.setEnergy(this.getEnergy()-1);
 	}
 
 	public void advanceY(int i) {
 		this.setY(this.getY() + i);
+		this.setEnergy(this.getEnergy()-1);
 	}
 
 	public int getX() {
@@ -151,6 +153,7 @@ public class Ant extends JPanel {
 
 	public void draw(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
+		g2.setColor(this.getColor());
 		g2.drawLine(this.getX(), this.getY(), this.getX() + 1, this.getY() + 1);
 	}
 

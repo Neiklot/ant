@@ -6,6 +6,9 @@ import java.awt.Graphics;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
@@ -14,6 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
+import neiklot.visio.environment.Food;
 import neiklot.visio.live.Ant;
 
 public class TerrainConstructor {
@@ -50,8 +54,7 @@ public class TerrainConstructor {
 		Ant ant2 = new Ant(1, -3, -4, 50, 50, Color.RED);
 		Ant ant3 = new Ant(2, -5, -6, 0, 0, Color.BLUE);
 		Ant ant4 = new Ant(3, -7, -8, 50, 50, Color.RED);
-		
-		
+
 		JFrame frame = new JFrame("Terrain");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new GridBagLayout());
@@ -59,6 +62,7 @@ public class TerrainConstructor {
 		terrain.addEntity(ant2);
 		terrain.addEntity(ant3);
 		terrain.addEntity(ant4);
+
 		setGamePanelKeyBindings(terrain);
 		frame.add(terrain);
 		frame.pack();
@@ -84,10 +88,11 @@ public class TerrainConstructor {
 		 */
 		private static final long serialVersionUID = 1L;
 		ArrayList<Ant> ants = new ArrayList<>();
+		ArrayList<Food> foods = new ArrayList<>();
 		public boolean running = true, paused = false;
 		private int frameCount = 0;
 		private int fps = 0;
-		private int borns = 0, dieds = 0,brothers=0;
+		private int borns = 0, dieds = 0, brothers = 0;
 
 		public TerrainPanel() {
 			setLayout(null);
@@ -111,16 +116,19 @@ public class TerrainConstructor {
 		@Override
 		protected void paintComponent(Graphics g) {
 			super.paintComponent(g);
-			g.setColor(Color.GREEN);
+			g.setColor(Color.green);
 			g.fillRect(0, 0, getWidth(), getHeight());
 			g.setColor(Color.BLACK);
-//			g.drawString("FPS: " + fps, 5, 10);
+			// g.drawString("FPS: " + fps, 5, 10);
 			g.drawString("ants population: " + ants.size(), 5, 20);
 			g.drawString("ants died: " + dieds, 5, 30);
 			g.drawString("ants born: " + borns, 5, 40);
 			g.drawString("ants No brothers: " + brothers, 5, 50);
 			for (Ant ant : ants) {
 				ant.draw(g);
+			}
+			for (Food food : foods) {
+				food.draw(g);
 			}
 
 			frameCount++;
@@ -145,8 +153,14 @@ public class TerrainConstructor {
 						for (Ant ant : ants) {
 							ant.moveAnt();
 						}
-						dieds=God.comprovingDieds(ants,dieds);
-						brothers=God.countBrothers(ants);
+						dieds = God.comprovingDieds(ants, dieds);
+						// brothers = God.countBrothers(ants);
+						
+						if(now%100==0){
+							God.raiseFood(foods);
+						}
+						brothers = terrain.foods.size();
+						God.launching(ants, foods);
 						if (God.comprovingCollision(ants)) {
 							borns++;
 						}
@@ -190,6 +204,10 @@ public class TerrainConstructor {
 			ants.add(ant);
 		}
 
+		public void addFood(Food food) {
+			foods.add(food);
+		}
+
 		private void drawTerrain() {
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
@@ -199,4 +217,5 @@ public class TerrainConstructor {
 			});
 		}
 	}
+
 }
