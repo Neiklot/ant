@@ -16,6 +16,7 @@ public class Ant extends JPanel {
 	int id,idF,idM;
 	int age;
 	int ageToDie;
+	int energy;
 	
 
 	/**
@@ -36,6 +37,7 @@ public class Ant extends JPanel {
 		this.setId(id);
 		this.setIdF(idF);
 		this.setIdM(idM);
+		this.setEnergy(100);
 	}
 
 	public int randomAgeToDie(){
@@ -58,6 +60,14 @@ public class Ant extends JPanel {
 	
 	public int getId(){
 		return this.id;
+	}
+
+	public int getEnergy() {
+		return energy;
+	}
+
+	public void setEnergy(int energy) {
+		this.energy = energy;
 	}
 
 	public int getAgeToDie() {
