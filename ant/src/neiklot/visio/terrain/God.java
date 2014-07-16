@@ -66,11 +66,11 @@ public class God {
 		return max;
 	}
 
-	public static double distance(int x, int x2, int y, int y2) {
+	public synchronized static double distance(int x, int x2, int y, int y2) {
 		return Math.sqrt(Math.pow((x2 - x), 2) + Math.pow((y2 - y), 2));
 	}
 
-	public static void newBorn(ArrayList<Ant> ants, Ant father, Ant mather) {
+	public synchronized static void newBorn(ArrayList<Ant> ants, Ant father, Ant mather) {
 		if (father.getInteligence()) {
 			Inteligence ant = new Inteligence(getMaxId(ants) + 1,
 					father.getId(), mather.getId(), father.getX() + 50,
@@ -86,7 +86,7 @@ public class God {
 
 	}
 
-	public static boolean reproduction(Ant father, Ant mather) {
+	public synchronized static boolean reproduction(Ant father, Ant mather) {
 		if (!isTheSame(father, mather) && !isTheBrother(father, mather)
 				&& !isTheFather(father, mather) && !isTheMather(father, mather)) {
 			return true;
