@@ -47,7 +47,6 @@ public class God {
 				Food food = foodIterator.next();
 				if (distance(ants.get(a).getX(), food.getX(), ants.get(a)
 						.getY(), food.getY()) < 15) {
-					food = null;
 					foodIterator.remove();
 					ants.get(a).setEnergy(1000);
 				}
@@ -70,12 +69,22 @@ public class God {
 		return Math.sqrt(Math.pow((x2 - x), 2) + Math.pow((y2 - y), 2));
 	}
 
-	public synchronized static void newBorn(ArrayList<Ant> ants, Ant father, Ant mather) {
-		if (father.getInteligence()) {
+	public synchronized static void newBorn(ArrayList<Ant> ants, Ant father,
+			Ant mather) {
+		if (father.getInteligence() && mather.getInteligence()) {
 			Inteligence ant = new Inteligence(getMaxId(ants) + 1,
 					father.getId(), mather.getId(), father.getX() + 50,
 					father.getY() + 50, Color.RED);
 			ant.setInteligence(true);
+			ants.add(ant);
+		}
+		if (father.getInteligence()) {
+			Inteligence ant = new Inteligence(getMaxId(ants) + 1,
+					father.getId(), mather.getId(), father.getX() + 50,
+					father.getY() + 50, Color.RED);
+			if (getRandomBoolean()) {
+				ant.setInteligence(true);
+			}
 			ants.add(ant);
 		} else {
 			Ant ant = new Ant(getMaxId(ants) + 1, father.getId(),
@@ -84,6 +93,10 @@ public class God {
 			ants.add(ant);
 		}
 
+	}
+
+	public synchronized static boolean getRandomBoolean() {
+		return Math.random() < 0.5;
 	}
 
 	public synchronized static boolean reproduction(Ant father, Ant mather) {
@@ -116,7 +129,6 @@ public class God {
 		while (antsIterator.hasNext()) {
 			Ant ant = antsIterator.next();
 			if (ant.getAge() > ant.getAgeToDie() || ant.getEnergy() <= 0) {
-				ant = null;
 				antsIterator.remove();
 				dieds++;
 			}

@@ -36,7 +36,7 @@ public class Ant extends JPanel {
 		this.setId(id);
 		this.setIdF(idF);
 		this.setIdM(idM);
-		this.setEnergy(500);
+		this.setEnergy(250);
 		this.inteligence = false;
 	}
 
