@@ -36,7 +36,8 @@ public class Ant extends JPanel {
 		this.setId(id);
 		this.setIdF(idF);
 		this.setIdM(idM);
-		this.setEnergy(1000);
+		this.setEnergy(500);
+		this.inteligence = false;
 	}
 
 	public int randomAgeToDie() {
@@ -213,6 +214,10 @@ public class Ant extends JPanel {
 
 	public boolean getRandomBoolean() {
 		return Math.random() < 0.5;
+	}
+
+	public boolean getInteligence() {
+		return this.inteligence;
 	}
 
 }

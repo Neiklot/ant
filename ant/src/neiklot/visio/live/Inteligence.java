@@ -15,13 +15,12 @@ public class Inteligence extends Ant {
 
 	public Inteligence(int id, int idF, int idM, int x, int y, Color color) {
 		super(id, idF, idM, x, y, color);
-		// TODO Auto-generated constructor stub
 	}
 
 	public boolean goToEat(ArrayList<Food> foods) {
 		Iterator<Food> foodIterator = foods.iterator();
 		boolean advanceX, advanceY;
-		int velocityY,velocityX;
+		int velocityY=1,velocityX=1;
 		while (foodIterator.hasNext()) {
 			Food food = foodIterator.next();
 			if (distance(this.getX(), food.getX(), this.getY(), food.getY()) < 100) {

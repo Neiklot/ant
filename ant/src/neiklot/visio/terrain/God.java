@@ -8,6 +8,7 @@ import java.util.TimerTask;
 
 import neiklot.visio.environment.Food;
 import neiklot.visio.live.Ant;
+import neiklot.visio.live.Inteligence;
 
 public class God {
 
@@ -30,23 +31,23 @@ public class God {
 		}
 		return false;
 	}
-	
-	public synchronized static void raiseFood(ArrayList<Food> foods)
-	{
+
+	public synchronized static void raiseFood(ArrayList<Food> foods) {
 		Random rand = new Random();
-			int randomNumX = rand.nextInt(199);
-			int randomNumY = rand.nextInt(199);
-			foods.add(new Food(randomNumX, randomNumY));
+		int randomNumX = rand.nextInt(199);
+		int randomNumY = rand.nextInt(199);
+		foods.add(new Food(randomNumX, randomNumY));
 	}
 
-	public synchronized static boolean launching(ArrayList<Ant> ants, ArrayList<Food> foods) {
-		Iterator<Food> foodIterator=foods.iterator();
+	public synchronized static boolean launching(ArrayList<Ant> ants,
+			ArrayList<Food> foods) {
+		Iterator<Food> foodIterator = foods.iterator();
 		for (int a = 0; a < ants.size(); a++) {
 			while (foodIterator.hasNext()) {
-				Food food=foodIterator.next();
-				if (distance(ants.get(a).getX(), food.getX(), ants
-						.get(a).getY(), food.getY()) < 15){
-					food=null;
+				Food food = foodIterator.next();
+				if (distance(ants.get(a).getX(), food.getX(), ants.get(a)
+						.getY(), food.getY()) < 15) {
+					food = null;
 					foodIterator.remove();
 					ants.get(a).setEnergy(1000);
 				}
@@ -70,8 +71,19 @@ public class God {
 	}
 
 	public static void newBorn(ArrayList<Ant> ants, Ant father, Ant mather) {
-		ants.add(new Ant(getMaxId(ants) + 1, father.getId(), mather.getId(),
-				father.getX() + 50, father.getY() + 50, Color.BLACK));
+		if (father.getInteligence()) {
+			Inteligence ant = new Inteligence(getMaxId(ants) + 1,
+					father.getId(), mather.getId(), father.getX() + 50,
+					father.getY() + 50, Color.RED);
+			ant.setInteligence(true);
+			ants.add(ant);
+		} else {
+			Ant ant = new Ant(getMaxId(ants) + 1, father.getId(),
+					mather.getId(), father.getX() + 50, father.getY() + 50,
+					Color.BLACK);
+			ants.add(ant);
+		}
+
 	}
 
 	public static boolean reproduction(Ant father, Ant mather) {
@@ -98,7 +110,8 @@ public class God {
 		return (a.getId() == b.getIdM() || b.getId() == a.getIdM());
 	}
 
-	public synchronized static int comprovingDieds(ArrayList<Ant> ants, int dieds) {
+	public synchronized static int comprovingDieds(ArrayList<Ant> ants,
+			int dieds) {
 		Iterator<Ant> antsIterator = ants.iterator();
 		while (antsIterator.hasNext()) {
 			Ant ant = antsIterator.next();

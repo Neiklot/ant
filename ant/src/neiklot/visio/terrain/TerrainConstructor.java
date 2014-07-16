@@ -49,6 +49,7 @@ public class TerrainConstructor {
 
 	private void initComponents() {
 		Inteligence ant = new Inteligence(0, -1, -2, 0, 0, Color.RED);
+		ant.setInteligence(true);
 		Ant ant2 = new Ant(1, -3, -4, 50, 50, Color.BLACK);
 		Ant ant3 = new Ant(2, -5, -6, 0, 0, Color.BLACK);
 		Ant ant4 = new Ant(3, -7, -8, 50, 50, Color.BLACK);
@@ -121,7 +122,7 @@ public class TerrainConstructor {
 			g.drawString("ants population: " + ants.size(), 5, 20);
 			g.drawString("ants died: " + dieds, 5, 30);
 			g.drawString("ants born: " + borns, 5, 40);
-			g.drawString("ants No brothers: " + brothers, 5, 50);
+			g.drawString("Inteligent Ants: " + brothers, 5, 50);
 			for (Ant ant : ants) {
 				ant.draw(g);
 			}
@@ -149,7 +150,7 @@ public class TerrainConstructor {
 					while (now - lastUpdateTime > TIME_BETWEEN_UPDATES
 							&& updateCount < MAX_UPDATES_BEFORE_RENDER) {
 						for (Ant ant : ants) {
-							if (ant.getId() == 0) {
+							if (ant.getInteligence()&& foods.size()>0) {
 								((Inteligence) ant).goToEat(foods);
 							} else {
 								ant.moveAnt();
@@ -162,7 +163,10 @@ public class TerrainConstructor {
 						if (now % 100 == 0) {
 							God.raiseFood(foods);
 						}
-						brothers = terrain.foods.size();
+						brothers=0;
+						for (Ant ant : ants) {
+							if(ant.getInteligence())brothers++;
+						}
 						God.launching(ants, foods);
 						if (God.comprovingCollision(ants)) {
 							borns++;
