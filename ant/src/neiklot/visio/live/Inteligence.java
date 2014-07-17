@@ -12,7 +12,8 @@ public class Inteligence extends Ant {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
+	int terrainWidth=500,terrainHeight=500;
+	
 	public Inteligence(int id, int idF, int idM, int x, int y, Color color) {
 		super(id, idF, idM, x, y, color);
 	}
@@ -23,7 +24,7 @@ public class Inteligence extends Ant {
 		int velocityY=1,velocityX=1;
 		while (foodIterator.hasNext()) {
 			Food food = foodIterator.next();
-			if (distance(this.getX(), food.getX(), this.getY(), food.getY()) < 100) {
+			if (distance(this.getX(), food.getX(), this.getY(), food.getY()) < 500) {
 				if (food.getX() > this.getX()) {
 					advanceX = true;
 					velocityX=1;
@@ -59,7 +60,7 @@ public class Inteligence extends Ant {
 	public void moveAnt(boolean advancingOnX,boolean advancingOnY,int velocityX,int velocityY) {
 		this.setAge(this.getAge() + 1);
 		if (advancingOnX) {
-			if (!this.collisionX_MAX(199, this.getX())) {
+			if (!this.collisionX_MAX(terrainWidth, this.getX())) {
 				this.advanceX(velocityX);
 			} else {
 				advancingOnX = false;
@@ -72,7 +73,7 @@ public class Inteligence extends Ant {
 			}
 		}
 		if (advancingOnY) {
-			if (!this.collisionY_MAX(199, this.getY())) {
+			if (!this.collisionY_MAX(terrainHeight, this.getY())) {
 				this.advanceY(velocityY);
 			} else {
 				advancingOnY = false;

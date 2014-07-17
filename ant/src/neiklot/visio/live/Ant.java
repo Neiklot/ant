@@ -8,7 +8,7 @@ import java.util.Random;
 import javax.swing.JPanel;
 
 public class Ant extends JPanel {
-
+	int terrainWidth=500,terrainHeight=500;
 	boolean advancingOnX = true, advancingOnY = true, inteligence = false;
 	Random rand = new Random();
 	int randomNumX = 0, randomNumY = 0;
@@ -36,7 +36,7 @@ public class Ant extends JPanel {
 		this.setId(id);
 		this.setIdF(idF);
 		this.setIdM(idM);
-		this.setEnergy(250);
+		this.setEnergy(500);
 		this.inteligence = false;
 	}
 
@@ -184,7 +184,7 @@ public class Ant extends JPanel {
 		}
 
 		if (advancingOnX) {
-			if (!this.collisionX_MAX(199, this.getX())) {
+			if (!this.collisionX_MAX(terrainWidth, this.getX())) {
 				this.advanceX(randomNumX);
 			} else {
 				advancingOnX = false;
@@ -197,7 +197,7 @@ public class Ant extends JPanel {
 			}
 		}
 		if (advancingOnY) {
-			if (!this.collisionY_MAX(199, this.getY())) {
+			if (!this.collisionY_MAX(terrainHeight, this.getY())) {
 				this.advanceY(randomNumY);
 			} else {
 				advancingOnY = false;

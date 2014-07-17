@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 
@@ -21,6 +22,8 @@ import neiklot.visio.live.Inteligence;
 public class TerrainConstructor {
 
 	final TerrainPanel terrain = new TerrainPanel();
+	final ResultsPanel results = new ResultsPanel();
+	int terrainWidth=500,terrainHeight=500;
 
 	public TerrainConstructor() {
 		initComponents();
@@ -48,27 +51,35 @@ public class TerrainConstructor {
 	}
 
 	private void initComponents() {
-		Inteligence ant = new Inteligence(0, -1, -2, 0, 0, Color.RED);
-		ant.setInteligence(true);
-		Ant ant2 = new Ant(1, -3, -4, 50, 50, Color.BLACK);
-		Ant ant3 = new Ant(2, -5, -6, 0, 0, Color.BLACK);
-		Ant ant4 = new Ant(3, -7, -8, 50, 50, Color.BLACK);
 
+		initScenario();
 		JFrame frame = new JFrame("Terrain");
+		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new GridBagLayout());
-		terrain.addEntity(ant);
-		terrain.addEntity(ant2);
-		terrain.addEntity(ant3);
-		terrain.addEntity(ant4);
+
 
 		setGamePanelKeyBindings(terrain);
+		frame.add(results);
 		frame.add(terrain);
 		frame.pack();
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 
 		runGameLoop();
+	}
+	
+	public void initScenario(){
+		Inteligence ant = new Inteligence(0, -1, -2, 0, 0, Color.RED);
+		ant.setInteligence(true);
+		Ant ant2 = new Ant(1, -3, -4, 50, 50, Color.BLACK);
+		Ant ant3 = new Ant(2, -5, -6, 0, 0, Color.BLACK);
+		Ant ant4 = new Ant(3, -7, -8, 50, 50, Color.BLACK);
+		
+		terrain.addEntity(ant);
+		terrain.addEntity(ant2);
+		terrain.addEntity(ant3);
+		terrain.addEntity(ant4);
 	}
 
 	public void runGameLoop() {
@@ -80,20 +91,9 @@ public class TerrainConstructor {
 		});
 		loop.start();
 	}
-
-	class TerrainPanel extends JPanel {
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = 1L;
-		ArrayList<Ant> ants = new ArrayList<>();
-		ArrayList<Food> foods = new ArrayList<>();
-		public boolean running = true, paused = false;
-		private int frameCount = 0;
-		private int fps = 0;
-		private int borns = 0, dieds = 0, brothers = 0;
-
-		public TerrainPanel() {
+	
+	class ResultsPanel extends JPanel{
+		public ResultsPanel() {
 			setLayout(null);
 		}
 
@@ -111,18 +111,71 @@ public class TerrainConstructor {
 		public Dimension getPreferredSize() {
 			return new Dimension(200, 200);
 		}
+		
+
+		@Override
+		protected void paintComponent(Graphics g) {
+			super.paintComponent(g);
+//			g.setColor(Color.green);
+//			g.fillRect(0, 0, getWidth(), getHeight());
+			g.setColor(Color.BLACK);
+			// g.drawString("FPS: " + fps, 5, 10);
+			g.drawString("ants population: " + terrain.ants.size(), 5, 20);
+			g.drawString("ants died: " + terrain.dieds, 5, 30);
+			g.drawString("ants born: " + terrain.borns, 5, 40);
+			g.drawString("Inteligent Ants: " + terrain.brothers, 5, 50);
+			g.drawString("Generations: " + terrain.generations, 5, 60);
+
+		}
+
+		private void drawResult() {
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					repaint();
+				}
+			});
+		}
+		
+	}
+
+	class TerrainPanel extends JPanel {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		public boolean running = true, paused = false;
+		private int frameCount = 0;
+		private int fps = 0;
+		private int borns = 0, dieds = 0, brothers = 0,generations=0;
+		ArrayList<Ant> ants = new ArrayList<>();
+		ArrayList<Food> foods = new ArrayList<>();
+
+		public TerrainPanel() {
+			setLayout(null);
+		}
+
+		@Override
+		public Dimension getMinimumSize() {
+			return getPreferredSize();
+		}
+
+		@Override
+		public Dimension getMaximumSize() {
+			return getPreferredSize();
+		}
+
+		@Override
+		public Dimension getPreferredSize() {
+			return new Dimension(terrainWidth, terrainHeight);
+		}
 
 		@Override
 		protected void paintComponent(Graphics g) {
 			super.paintComponent(g);
 			g.setColor(Color.green);
 			g.fillRect(0, 0, getWidth(), getHeight());
-			g.setColor(Color.BLACK);
-			// g.drawString("FPS: " + fps, 5, 10);
-			g.drawString("ants population: " + ants.size(), 5, 20);
-			g.drawString("ants died: " + dieds, 5, 30);
-			g.drawString("ants born: " + borns, 5, 40);
-			g.drawString("Inteligent Ants: " + brothers, 5, 50);
+
 			for (Ant ant : ants) {
 				ant.draw(g);
 			}
@@ -149,13 +202,19 @@ public class TerrainConstructor {
 				if (!paused) {
 					while (now - lastUpdateTime > TIME_BETWEEN_UPDATES
 							&& updateCount < MAX_UPDATES_BEFORE_RENDER) {
+						if(ants.size()<=0){
+							dieds=0;
+							borns=0;
+							generations++;
+							initScenario();
+						}
+						
 						for (Ant ant : ants) {
 							if (ant.getInteligence()&& foods.size()>0) {
 								((Inteligence) ant).goToEat(foods);
 							} else {
 								ant.moveAnt();
 							}
-							ant.setEnergy(ant.getEnergy()-1);
 						}
 						dieds = God.comprovingDieds(ants, dieds);
 						// brothers = God.countBrothers(ants);
@@ -163,6 +222,12 @@ public class TerrainConstructor {
 						if (now % 100 == 0) {
 							God.raiseFood(foods);
 						}
+						if(now %20==0){
+							for(Ant ant:ants){
+								ant.setEnergy(ant.getEnergy()-1);
+							}
+						}
+						
 						brothers=0;
 						for (Ant ant : ants) {
 							if(ant.getInteligence())brothers++;
@@ -181,6 +246,7 @@ public class TerrainConstructor {
 					}
 
 					drawTerrain();
+					results.drawResult();
 					lastRenderTime = now;
 
 					int thisSecond = (int) (lastUpdateTime / 1000000000);

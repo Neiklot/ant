@@ -4,13 +4,15 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
-import java.util.TimerTask;
 
 import neiklot.visio.environment.Food;
 import neiklot.visio.live.Ant;
 import neiklot.visio.live.Inteligence;
 
 public class God {
+	static int terrainWidth = 500;
+	static int terrainHeight = 500;
+	static Random rand = new Random();
 
 	public synchronized static boolean comprovingCollision(ArrayList<Ant> ants) {
 		for (int a = 0; a < ants.size(); a++) {
@@ -21,8 +23,7 @@ public class God {
 							&& reproduction(ants.get(a), ants.get(b))
 							&& ants.get(a).getAge() > 200
 							&& ants.get(b).getAge() > 200) {
-						ants.get(b).setX(0);
-						ants.get(b).setY(199);
+
 						newBorn(ants, ants.get(a), ants.get(b));
 						return true;
 					}
@@ -33,9 +34,8 @@ public class God {
 	}
 
 	public synchronized static void raiseFood(ArrayList<Food> foods) {
-		Random rand = new Random();
-		int randomNumX = rand.nextInt(199);
-		int randomNumY = rand.nextInt(199);
+		int randomNumX = rand.nextInt(terrainWidth);
+		int randomNumY = rand.nextInt(terrainHeight);
 		foods.add(new Food(randomNumX, randomNumY));
 	}
 
@@ -46,7 +46,7 @@ public class God {
 			while (foodIterator.hasNext()) {
 				Food food = foodIterator.next();
 				if (distance(ants.get(a).getX(), food.getX(), ants.get(a)
-						.getY(), food.getY()) < 15) {
+						.getY(), food.getY()) < 50) {
 					foodIterator.remove();
 					ants.get(a).setEnergy(1000);
 				}
@@ -71,25 +71,26 @@ public class God {
 
 	public synchronized static void newBorn(ArrayList<Ant> ants, Ant father,
 			Ant mather) {
+		int randomNumX = rand.nextInt(terrainWidth);
+		int randomNumY = rand.nextInt(terrainHeight);
 		if (father.getInteligence() && mather.getInteligence()) {
 			Inteligence ant = new Inteligence(getMaxId(ants) + 1,
-					father.getId(), mather.getId(), father.getX() + 50,
-					father.getY() + 50, Color.RED);
+					father.getId(), mather.getId(), randomNumX, randomNumY,
+					Color.RED);
 			ant.setInteligence(true);
 			ants.add(ant);
 		}
 		if (father.getInteligence()) {
 			Inteligence ant = new Inteligence(getMaxId(ants) + 1,
-					father.getId(), mather.getId(), father.getX() + 50,
-					father.getY() + 50, Color.RED);
+					father.getId(), mather.getId(), randomNumX, randomNumY,
+					Color.RED);
 			if (getRandomBoolean()) {
 				ant.setInteligence(true);
 			}
 			ants.add(ant);
 		} else {
 			Ant ant = new Ant(getMaxId(ants) + 1, father.getId(),
-					mather.getId(), father.getX() + 50, father.getY() + 50,
-					Color.BLACK);
+					mather.getId(), randomNumX, randomNumY, Color.BLACK);
 			ants.add(ant);
 		}
 
