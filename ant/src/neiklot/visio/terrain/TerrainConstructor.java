@@ -4,9 +4,9 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
@@ -17,6 +17,7 @@ import javax.swing.SwingUtilities;
 
 import neiklot.visio.environment.Food;
 import neiklot.visio.live.Ant;
+import neiklot.visio.live.AntsPredator;
 import neiklot.visio.live.Inteligence;
 
 public class TerrainConstructor {
@@ -42,10 +43,40 @@ public class TerrainConstructor {
 		terrain.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
 				KeyStroke.getKeyStroke("D"), "D pressed");
 		terrain.getActionMap().put("D pressed", new AbstractAction() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 				terrain.paused = false;
 				System.out.println("No pause pressed");
+			}
+		});
+		terrain.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+				KeyStroke.getKeyStroke("H"), "H pressed");
+		terrain.getActionMap().put("H pressed", new AbstractAction() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent ae) {
+				addHunter();
+				System.out.println("Created Spider");
+			}
+		});
+		
+		terrain.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+				KeyStroke.getKeyStroke("J"), "J pressed");
+		terrain.getActionMap().put("J pressed", new AbstractAction() {
+
+			@Override
+			public void actionPerformed(ActionEvent ae) {
+				killerHunter();
+				System.out.println("Killed Spider");
 			}
 		});
 	}
@@ -69,17 +100,33 @@ public class TerrainConstructor {
 		runGameLoop();
 	}
 	
+	public void addHunter(){
+		AntsPredator spider=new AntsPredator();
+		terrain.addAntPredator(spider);
+	}
+	
+	public void killerHunter(){
+
+		Iterator<AntsPredator> spiderIterator= terrain.spiders.iterator();
+		if(spiderIterator.hasNext()){
+			spiderIterator.next();
+			spiderIterator.remove();
+		}
+	}
+	
 	public void initScenario(){
 		Inteligence ant = new Inteligence(0, -1, -2, 0, 0, Color.RED);
 		ant.setInteligence(true);
 		Ant ant2 = new Ant(1, -3, -4, 50, 50, Color.BLACK);
 		Ant ant3 = new Ant(2, -5, -6, 0, 0, Color.BLACK);
 		Ant ant4 = new Ant(3, -7, -8, 50, 50, Color.BLACK);
+
 		
 		terrain.addEntity(ant);
 		terrain.addEntity(ant2);
 		terrain.addEntity(ant3);
 		terrain.addEntity(ant4);
+
 	}
 
 	public void runGameLoop() {
@@ -93,6 +140,11 @@ public class TerrainConstructor {
 	}
 	
 	class ResultsPanel extends JPanel{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		public ResultsPanel() {
 			setLayout(null);
 		}
@@ -123,8 +175,9 @@ public class TerrainConstructor {
 			g.drawString("ants population: " + terrain.ants.size(), 5, 20);
 			g.drawString("ants died: " + terrain.dieds, 5, 30);
 			g.drawString("ants born: " + terrain.borns, 5, 40);
-			g.drawString("Inteligent Ants: " + terrain.brothers, 5, 50);
-			g.drawString("Generations: " + terrain.generations, 5, 60);
+			g.drawString("Dummy Ants: " + (terrain.ants.size()-terrain.brothers), 5, 50);
+			g.drawString("Inteligent Ants: " + terrain.brothers, 5, 60);
+			g.drawString("Generations: " + terrain.generations, 5, 70);
 
 		}
 
@@ -150,6 +203,7 @@ public class TerrainConstructor {
 		private int borns = 0, dieds = 0, brothers = 0,generations=0;
 		ArrayList<Ant> ants = new ArrayList<>();
 		ArrayList<Food> foods = new ArrayList<>();
+		ArrayList<AntsPredator> spiders = new ArrayList<>();
 
 		public TerrainPanel() {
 			setLayout(null);
@@ -182,6 +236,9 @@ public class TerrainConstructor {
 			for (Food food : foods) {
 				food.draw(g);
 			}
+			for (AntsPredator spider : spiders) {
+				spider.draw(g);
+			}
 
 			frameCount++;
 		}
@@ -208,6 +265,7 @@ public class TerrainConstructor {
 							generations++;
 							initScenario();
 						}
+						
 						
 						for (Ant ant : ants) {
 							if (ant.getInteligence()&& foods.size()>0) {
@@ -236,6 +294,12 @@ public class TerrainConstructor {
 						if (God.comprovingCollision(ants)) {
 							borns++;
 						}
+						
+						for (AntsPredator spider : spiders) {
+							spider.moveAntPredator();
+						}
+						
+						dieds=God.hunter(ants,spiders,dieds);
 
 						lastUpdateTime += TIME_BETWEEN_UPDATES;
 						updateCount++;
@@ -275,6 +339,10 @@ public class TerrainConstructor {
 
 		public void addEntity(Ant ant) {
 			ants.add(ant);
+		}
+		
+		public void addAntPredator(AntsPredator spider) {
+			spiders.add(spider);
 		}
 
 		public void addFood(Food food) {

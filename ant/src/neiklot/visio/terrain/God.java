@@ -7,6 +7,7 @@ import java.util.Random;
 
 import neiklot.visio.environment.Food;
 import neiklot.visio.live.Ant;
+import neiklot.visio.live.AntsPredator;
 import neiklot.visio.live.Inteligence;
 
 public class God {
@@ -54,6 +55,23 @@ public class God {
 		}
 		return false;
 	}
+	
+	public static int hunter(ArrayList<Ant> ants,
+			ArrayList<AntsPredator> spiders, int dieds){
+		int died=dieds;
+		for (int a = 0; a < spiders.size(); a++) {
+			Iterator<Ant> antIterator = ants.iterator();
+			while (antIterator.hasNext()) {
+				Ant ant = antIterator.next();
+				if (distance(spiders.get(a).getX_position(), ant.getX(), spiders.get(a)
+						.getY_position(), ant.getY()) < 10 && !ant.getInteligence()) {
+					died++;
+					antIterator.remove();
+				}
+			}
+		}		
+		return died;
+	}
 
 	public static int getMaxId(ArrayList<Ant> ants) {
 		int max = 0;
@@ -79,8 +97,7 @@ public class God {
 					Color.RED);
 			ant.setInteligence(true);
 			ants.add(ant);
-		}
-		if (father.getInteligence()) {
+		}else if (father.getInteligence()) {
 			Inteligence ant = new Inteligence(getMaxId(ants) + 1,
 					father.getId(), mather.getId(), randomNumX, randomNumY,
 					Color.RED);
