@@ -41,8 +41,8 @@ public class God {
 
 	public synchronized static boolean launching(ArrayList<Ant> ants,
 			ArrayList<Food> foods) {
-		Iterator<Food> foodIterator = foods.iterator();
 		for (int a = 0; a < ants.size(); a++) {
+			Iterator<Food> foodIterator = foods.iterator();
 			while (foodIterator.hasNext()) {
 				Food food = foodIterator.next();
 				if (distance(ants.get(a).getX(), food.getX(), ants.get(a)
