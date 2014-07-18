@@ -26,7 +26,7 @@ public class Inteligence extends Ant {
 			while (spidersIterator.hasNext()) {
 				AntsPredator spider = spidersIterator.next();
 				if (distance(this.getX(), spider.getX_position(), this.getY(),
-						spider.getY_position()) < 200) {
+						spider.getY_position()) < 100) {
 					if (spider.getX_position() > this.getX()) {
 						advanceX = false;
 						velocityX = 3;
