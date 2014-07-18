@@ -39,6 +39,10 @@ public class Ant extends JPanel {
 		this.setEnergy(500);
 		this.inteligence = false;
 	}
+	
+	public void setColor(Color color){
+		this.color=color;
+	}
 
 	public int randomAgeToDie() {
 		return 1000 - rand.nextInt(900);
@@ -157,7 +161,7 @@ public class Ant extends JPanel {
 		return this.color;
 	}
 
-	public void draw(Graphics g) {
+	public synchronized void draw(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setColor(this.getColor());
 		g2.drawLine(this.getX(), this.getY(), this.getX() + 1, this.getY() + 1);

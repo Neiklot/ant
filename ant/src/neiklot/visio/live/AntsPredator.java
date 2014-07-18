@@ -3,7 +3,12 @@ package neiklot.visio.live;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
+
+import neiklot.visio.environment.Food;
 
 public class AntsPredator {
 	int terrainWidth=500,terrainHeight=500;
@@ -82,8 +87,8 @@ public class AntsPredator {
 			movement = 0;
 			advancingOnX = getRandomBoolean();
 			advancingOnY = getRandomBoolean();
-			randomNumX = rand.nextInt(3);
-			randomNumY = rand.nextInt(3);
+			randomNumX = rand.nextInt(2);
+			randomNumY = rand.nextInt(2);
 		}
 
 		if (advancingOnX) {
@@ -118,5 +123,80 @@ public class AntsPredator {
 	public boolean getRandomBoolean() {
 		return Math.random() < 0.5;
 	}
+	
+	public boolean goToHunter(List ants) {
+		Iterator<Ant> antsIterator = ants.iterator();
+		boolean advanceX, advanceY;
+		int velocityY = 1, velocityX = 1;
+		Ant target=null;
+		while (antsIterator.hasNext()) {
+			Ant ant = antsIterator.next();
+			if(target==null &&distance(this.getX_position(), ant.getX(), this.getY_position(), ant.getY()) < 200){
+				ant=target;
+			}
+		}
+			if(target!=null){
+				if (target.getX() > this.getX_position()) {
+					advanceX = true;
+					velocityX = 1;
+				} else if (target.getX() < this.getX_position()) {
+					advanceX = false;
+					velocityX = 1;
+				} else {
+					advanceX = false;
+					velocityX = 0;
+				}
+				if (target.getY() > this.getY_position()) {
+					advanceY = true;
+					velocityY = 1;
+				} else if (target.getY() < this.getY_position()) {
+					advanceY = false;
+					velocityY = 1;
+				} else {
+					advanceY = false;
+					velocityY = 0;
+				}
+				this.moveAntPredator(advanceX, advanceY, velocityX, velocityY);
+			} else {
+				this.moveAntPredator();
+			}
+		return false;
+	}
+	
+	public void moveAntPredator(boolean advancingOnX, boolean advancingOnY,
+			int velocityX, int velocityY) {
+		if (advancingOnX) {
+			if (!this.collisionX_MAX(terrainWidth, this.getX_position())) {
+				this.advanceX(velocityX);
+			} else {
+				advancingOnX = false;
+			}
+		} else {
+			if (!this.collisionX_MIN(0, this.getX_position())) {
+				this.advanceX(-velocityX);
+			} else {
+				advancingOnX = true;
+			}
+		}
+		if (advancingOnY) {
+			if (!this.collisionY_MAX(terrainHeight, this.getY_position())) {
+				this.advanceY(velocityY);
+			} else {
+				advancingOnY = false;
+			}
+		} else {
+			if (!this.collisionY_MIN(0, this.getY_position())) {
+				this.advanceY(-velocityY);
+			} else {
+				advancingOnY = true;
+			}
+		}
+		movement++;
+	}
+	
+	public static double distance(int x, int x2, int y, int y2) {
+		return Math.sqrt(Math.pow((x2 - x), 2) + Math.pow((y2 - y), 2));
+	}
+
 
 }

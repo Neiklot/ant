@@ -12,41 +12,84 @@ public class Inteligence extends Ant {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	int terrainWidth=500,terrainHeight=500;
-	
+	int terrainWidth = 500, terrainHeight = 500;
+
 	public Inteligence(int id, int idF, int idM, int x, int y, Color color) {
 		super(id, idF, idM, x, y, color);
+	}
+
+	public boolean scape(ArrayList<AntsPredator> spiders, ArrayList<Food> foods) {
+		Iterator<AntsPredator> spidersIterator = spiders.iterator();
+		boolean advanceX, advanceY;
+		int velocityY = 1, velocityX = 1;
+		if (spiders.size() > 0) {
+			while (spidersIterator.hasNext()) {
+				AntsPredator spider = spidersIterator.next();
+				if (distance(this.getX(), spider.getX_position(), this.getY(),
+						spider.getY_position()) < 200) {
+					if (spider.getX_position() > this.getX()) {
+						advanceX = false;
+						velocityX = 3;
+					} else if (spider.getX_position() < this.getX()) {
+						advanceX = true;
+						velocityX = 3;
+					} else {
+						advanceX = true;
+						velocityX = 0;
+					}
+					if (spider.getY_position() > this.getY()) {
+						advanceY = false;
+						velocityY = 3;
+					} else if (spider.getY_position() < this.getY()) {
+						advanceY = true;
+						velocityY = 3;
+					} else {
+						advanceY = true;
+						velocityY = 0;
+					}
+					this.moveAnt(advanceX, advanceY, velocityX, velocityY);
+				} else {
+					this.moveAnt();
+				}
+			}
+		}else  if(foods.size() > 0) {
+			this.goToEat(foods);
+		} else {
+			this.moveAnt();
+		}
+
+		return false;
 	}
 
 	public boolean goToEat(ArrayList<Food> foods) {
 		Iterator<Food> foodIterator = foods.iterator();
 		boolean advanceX, advanceY;
-		int velocityY=1,velocityX=1;
+		int velocityY = 1, velocityX = 1;
 		while (foodIterator.hasNext()) {
 			Food food = foodIterator.next();
 			if (distance(this.getX(), food.getX(), this.getY(), food.getY()) < 500) {
 				if (food.getX() > this.getX()) {
 					advanceX = true;
-					velocityX=1;
-				} else if(food.getX() < this.getX()){
+					velocityX = 1;
+				} else if (food.getX() < this.getX()) {
 					advanceX = false;
-					velocityX=1;
-				}else{
+					velocityX = 1;
+				} else {
 					advanceX = false;
-					velocityX=0;
+					velocityX = 0;
 				}
 				if (food.getY() > this.getY()) {
 					advanceY = true;
-					velocityY=1;
-				} else if (food.getY() < this.getY()){
+					velocityY = 1;
+				} else if (food.getY() < this.getY()) {
 					advanceY = false;
-					velocityY=1;
-				}else{
+					velocityY = 1;
+				} else {
 					advanceY = false;
-					velocityY=0;
+					velocityY = 0;
 				}
-				this.moveAnt(advanceX,advanceY,velocityX,velocityY);
-			}else{
+				this.moveAnt(advanceX, advanceY, velocityX, velocityY);
+			} else {
 				this.moveAnt();
 			}
 		}
@@ -57,7 +100,8 @@ public class Inteligence extends Ant {
 		return Math.sqrt(Math.pow((x2 - x), 2) + Math.pow((y2 - y), 2));
 	}
 
-	public void moveAnt(boolean advancingOnX,boolean advancingOnY,int velocityX,int velocityY) {
+	public void moveAnt(boolean advancingOnX, boolean advancingOnY,
+			int velocityX, int velocityY) {
 		this.setAge(this.getAge() + 1);
 		if (advancingOnX) {
 			if (!this.collisionX_MAX(terrainWidth, this.getX())) {

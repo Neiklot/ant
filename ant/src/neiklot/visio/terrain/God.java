@@ -3,6 +3,7 @@ package neiklot.visio.terrain;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
 
 import neiklot.visio.environment.Food;
@@ -15,7 +16,7 @@ public class God {
 	static int terrainHeight = 500;
 	static Random rand = new Random();
 
-	public synchronized static boolean comprovingCollision(ArrayList<Ant> ants) {
+	public synchronized static boolean comprovingCollision(List<Ant> ants) {
 		for (int a = 0; a < ants.size(); a++) {
 			for (int b = 0; b < ants.size(); b++) {
 				if (a != b) {
@@ -40,7 +41,7 @@ public class God {
 		foods.add(new Food(randomNumX, randomNumY));
 	}
 
-	public synchronized static boolean launching(ArrayList<Ant> ants,
+	public synchronized static boolean launching(List<Ant> ants,
 			ArrayList<Food> foods) {
 		for (int a = 0; a < ants.size(); a++) {
 			Iterator<Food> foodIterator = foods.iterator();
@@ -55,25 +56,25 @@ public class God {
 		}
 		return false;
 	}
-	
-	public static int hunter(ArrayList<Ant> ants,
-			ArrayList<AntsPredator> spiders, int dieds){
-		int died=dieds;
+
+	public static int hunter(List ants, ArrayList<AntsPredator> spiders,
+			int dieds) {
+		int died = dieds;
 		for (int a = 0; a < spiders.size(); a++) {
 			Iterator<Ant> antIterator = ants.iterator();
 			while (antIterator.hasNext()) {
 				Ant ant = antIterator.next();
-				if (distance(spiders.get(a).getX_position(), ant.getX(), spiders.get(a)
-						.getY_position(), ant.getY()) < 10 && !ant.getInteligence()) {
+				if (distance(spiders.get(a).getX_position(), ant.getX(),
+						spiders.get(a).getY_position(), ant.getY()) < 10) {
 					died++;
 					antIterator.remove();
 				}
 			}
-		}		
+		}
 		return died;
 	}
 
-	public static int getMaxId(ArrayList<Ant> ants) {
+	public static int getMaxId(List<Ant> ants) {
 		int max = 0;
 		for (Ant ant : ants) {
 			if (ant.getId() > 0) {
@@ -87,7 +88,7 @@ public class God {
 		return Math.sqrt(Math.pow((x2 - x), 2) + Math.pow((y2 - y), 2));
 	}
 
-	public synchronized static void newBorn(ArrayList<Ant> ants, Ant father,
+	public synchronized static void newBorn(List<Ant> ants, Ant father,
 			Ant mather) {
 		int randomNumX = rand.nextInt(terrainWidth);
 		int randomNumY = rand.nextInt(terrainHeight);
@@ -97,11 +98,18 @@ public class God {
 					Color.RED);
 			ant.setInteligence(true);
 			ants.add(ant);
-		}else if (father.getInteligence()) {
+		} else if (father.getInteligence()) {
 			Inteligence ant = new Inteligence(getMaxId(ants) + 1,
 					father.getId(), mather.getId(), randomNumX, randomNumY,
 					Color.RED);
+			ant.setInteligence(true);
+			ants.add(ant);
+		}else if (mather.getInteligence()) {
+			Inteligence ant = new Inteligence(getMaxId(ants) + 1,
+					father.getId(), mather.getId(), randomNumX, randomNumY,
+					Color.BLACK);
 			if (getRandomBoolean()) {
+				ant.setColor(Color.RED);
 				ant.setInteligence(true);
 			}
 			ants.add(ant);
@@ -141,8 +149,7 @@ public class God {
 		return (a.getId() == b.getIdM() || b.getId() == a.getIdM());
 	}
 
-	public synchronized static int comprovingDieds(ArrayList<Ant> ants,
-			int dieds) {
+	public synchronized static int comprovingDieds(List ants, int dieds) {
 		Iterator<Ant> antsIterator = ants.iterator();
 		while (antsIterator.hasNext()) {
 			Ant ant = antsIterator.next();
